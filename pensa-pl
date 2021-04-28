@@ -1,0 +1,4 @@
+[[1,2],3,4,[5,6],7].
+se [1,2] for lista, seleciona 1, e a guarda 3,4, ate ser lista
+
+ola([A|B],El,Acc,H_V,P)

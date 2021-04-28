@@ -1,0 +1,2 @@
+pertence(E,[L|_]):- E == L.
+pertence(E | [_|R]) :- pertence(E,R).

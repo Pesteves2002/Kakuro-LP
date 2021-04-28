@@ -1,0 +1,2 @@
+nao_pertence(_,[]).
+nao_pertence(P, [E | R]) :- nao_pertence(P, R).

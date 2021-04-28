@@ -1,0 +1,2 @@
+junta([],L,L).
+junta([P|R],L1,[P|L2]) :- junta(R,L1,L2).
