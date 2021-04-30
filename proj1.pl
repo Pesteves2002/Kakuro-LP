@@ -31,3 +31,40 @@ permutacoes([A|B], Sol) :-
 % conforme se trate de uma fila horizontal ou vertical, respectivamente,
 % significa que Esp é um espaço de Fila, tal como descrito na Secção 2.1, no passo 1.
 %-------------------------------------------------------------------------------
+
+cria_espaco([A|Res],v,espaco(W,Res)):- A = [W|_].
+
+cria_espaco([A|Res],h,espaco(W,Res)):- A = [_,W|_].
+
+
+% caso de paragem
+espaco_fila(Fila,Esp,H_V):- include(is_list,Fila,C),
+                           length(C,Tam),
+                           Tam == 1,
+                           cria_espaco(Fila,H_V,Esp),!.
+
+%cria espaco
+espaco_fila(Fila,Esp,H_V):- include(is_list,Fila,C),
+                           C = [_,Z|_],
+                           split(Fila,Z,F,_),
+                           cria_espaco(F,H_V,Esp).
+
+%andar na lista
+espaco_fila(Fila,Esp,H_V):- include(is_list,Fila,C),
+                              C = [_,Z|_],
+                              split(Fila,Z,_,B),
+                              Z \== [0,0],
+                              espaco_fila([Z|B],Esp,H_V).
+
+espaco_fila(Fila,Esp,H_V):- include(is_list,Fila,C),
+                           C = [_,Z|_],
+                           split(Fila,Z,_,B),
+                           Z == [0,0],
+                           espaco_fila(B,Esp,H_V).
+
+
+split([X|T],E,[],T):- X == E.
+
+split([X|T], E, [X|LL], LR) :-
+    X \== E,
+    split(T, E, LL, LR).
