@@ -43,18 +43,23 @@ espaco_fila(Fila,Esp,H_V):- include(is_list,Fila,C),
                            Tam == 1,
                            cria_espaco(Fila,H_V,Esp),!.
 
-%cria espaco
+%criar espaco
 espaco_fila(Fila,Esp,H_V):- include(is_list,Fila,C),
                            C = [_,Z|_],
                            split(Fila,Z,F,_),
+                           F = [A|B],
+                           A \== [0,0],
+                           B \== [],
                            cria_espaco(F,H_V,Esp).
 
-%andar na lista
+% adicionar a lista se Z for diferente de [0,0]
 espaco_fila(Fila,Esp,H_V):- include(is_list,Fila,C),
                               C = [_,Z|_],
                               split(Fila,Z,_,B),
                               Z \== [0,0],
                               espaco_fila([Z|B],Esp,H_V).
+
+% passar a lista se Z for igual a [0,0]
 
 espaco_fila(Fila,Esp,H_V):- include(is_list,Fila,C),
                            C = [_,Z|_],
@@ -62,9 +67,26 @@ espaco_fila(Fila,Esp,H_V):- include(is_list,Fila,C),
                            Z == [0,0],
                            espaco_fila(B,Esp,H_V).
 
-
+% funcao auxilliar para separar uma lista
 split([X|T],E,[],T):- X == E.
 
 split([X|T], E, [X|LL], LR) :-
     X \== E,
     split(T, E, LL, LR).
+
+
+%-------------------------------------------------------------------------------
+%                       espacos_fila(H_V, Fila, Espacos)
+%  Fila é uma fila (linha ou coluna) de uma grelha e
+%  H_V é um dos átomos h ou v, significa que Espacos é
+% a lista de todos os espaços de Fila, da esquerda para a direita.
+%-------------------------------------------------------------------------------
+
+espacos_fila(H_V,Fila,Esp):- setof(Aux,espaco_fila(Fila,Aux,H_V),Esp),!.
+espacos_fila(_,_,[]).
+
+%-------------------------------------------------------------------------------
+%                       espacos_puzzle(Puzzle, Espacos)
+% Puzzle é um puzzle, significa que Espacos é a lista de espaços de Puzzle,
+% tal como descrito na Secção 2.1, no passo 1.
+%-------------------------------------------------------------------------------
