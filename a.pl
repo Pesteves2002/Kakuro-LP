@@ -36,13 +36,25 @@ espaco_fila_aux([],_,_,[]).
 % se a nao for uma lista
 espaco_fila_aux([A|B],Perms,H_V,[A|Acumulador]):- \+ is_list(A), espaco_fila_aux(B,Perms,H_V,Acumulador). 
 
-espaco_fila_aux([A|B],[A|Acumulador],H_V,[]):-  is_list(A),espaco_fila_aux(B,_,H_V,Acumulador).
+espaco_fila_aux([A|B],Res,H_V,[]):-  is_list(A),cria_espaco([A|Acumulador],Res),espaco_fila_aux(B,_,H_V,Acumulador).
+
+espaco_fila_aux([A|B],Perms,H_V,[]):- is_list(A),espaco_fila_aux(B,Perms,H_V,_). 
 
 espaco_fila_aux([A|B],Perms,H_V,[]):- is_list(A),espaco_fila_aux(B,Perms,H_V,_). 
 
 
+cria_espaco([A|Res],espaco(W,Res)):- A = [W|_].
 
+% caso de paragem
+so_lista(L,A):- include(is_list,L,C),length(C,Tam), Tam == 1,cria_espaco(L,A),!.
 
+%cria espaco
+so_lista(L,A):- include(is_list,L,C),C = [_,Z|_],split(L,Z,F,_),cria_espaco(F,A).
 
+%andar na lista
+so_lista(L,A):- include(is_list,L,C),C = [_,Z|_],split(L,Z,_,B),so_lista([Z|B],A).
 
-
+split([E|T], E, [], T).
+split([X|T], E, [X|LL], LR) :-
+    dif(X, E),
+    split(T, E, LL, LR).
