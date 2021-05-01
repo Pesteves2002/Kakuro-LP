@@ -93,3 +93,19 @@ espacos_fila(_,_,[]).
 % Puzzle é um puzzle, significa que Espacos é a lista de espaços de Puzzle,
 % tal como descrito na Secção 2.1, no passo 1.
 %-------------------------------------------------------------------------------
+
+espacos_puzzle(Fila,Res):- le_puzzle(Fila,A,h),
+                            mat_transposta(Fila,Transposta),
+                            le_puzzle(Transposta,B,v),
+                            append(A,B,Res).
+% funcao auxiliar, ler um puzzle
+le_puzzle([],[],_).
+% caso de a lista ter espacos
+le_puzzle([A|Res],Junto,H_V):- espacos_fila(H_V,A,Resultado),
+                                Resultado \== [],
+                                append(Resultado,Espacos,Junto),
+                                le_puzzle(Res,Espacos,H_V),!.
+% caso de a lista nao ter espacos
+le_puzzle([A|Res],Espacos,H_V):- espacos_fila(H_V,A,Resultado),
+                                Resultado == [],
+                                le_puzzle(Res,Espacos,H_V),!.
