@@ -36,6 +36,8 @@ cria_espaco([A|Res],v,espaco(W,Res)):- A = [W|_].
 
 cria_espaco([A|Res],h,espaco(W,Res)):- A = [_,W|_].
 
+lista_espaco(espaco(_,Lista),Lista).
+
 
 % caso de paragem
 espaco_fila(Fila,Esp,H_V):- include(is_list,Fila,C),
@@ -85,7 +87,7 @@ split([X|T], E, [X|LL], LR) :-
 % a lista de todos os espaços de Fila, da esquerda para a direita.
 %-------------------------------------------------------------------------------
 
-espacos_fila(H_V,Fila,Esp):- setof(Aux,espaco_fila(Fila,Aux,H_V),Esp),!.
+espacos_fila(H_V,Fila,Esp):- bagof(Aux,espaco_fila(Fila,Aux,H_V),Esp),!.
 espacos_fila(_,_,[]).
 
 %-------------------------------------------------------------------------------
@@ -109,3 +111,35 @@ le_puzzle([A|Res],Junto,H_V):- espacos_fila(H_V,A,Resultado),
 le_puzzle([A|Res],Espacos,H_V):- espacos_fila(H_V,A,Resultado),
                                 Resultado == [],
                                 le_puzzle(Res,Espacos,H_V),!.
+
+%-------------------------------------------------------------------------------
+%             espacos_com_posicoes_comuns(Espacos, Esp, Esps_com)
+% Espacos é uma lista de espaços e Esp é um espaço,
+% significa que Esps_com é a lista de espaços com variáveis em comum com Esp, exceptuando Esp.
+% Os espaços em Esps_com devem aparecer pela mesma ordem que aparecem em Espacos.
+%-------------------------------------------------------------------------------
+
+espacos_com_posicoes_comuns([],_,[]).
+
+% caso de nao ter casas em comum
+espacos_com_posicoes_comuns([A|Res],Esp,Esps_com):- lista_espaco(A,Lst),
+                                                     lista_espaco(Esp,Num),
+                                                     \+ ver_comuns(Lst,Num),!,
+                                                     espacos_com_posicoes_comuns(Res,Esp,Esps_com),!.
+
+% caso de ter casas em comum
+espacos_com_posicoes_comuns([A|Res],Esp,[A|Esps_com]):- lista_espaco(A,Lst),
+                                                     lista_espaco(Esp,Num),
+                                                      ver_comuns(Lst,Num),
+                                                      A \== Esp,
+                                                      espacos_com_posicoes_comuns(Res,Esp,Esps_com),!.
+% caso de ser igual ao proprio espaco
+espacos_com_posicoes_comuns([A|Res],Esp,Esps_com):- A == Esp,
+                                                    espacos_com_posicoes_comuns(Res,Esp,Esps_com),!.
+
+%funcoes auxiliares
+membro(B,[A|_]):- B == A,!.
+membro(B,[_|Res]):- membro(B,Res).
+
+ver_comuns([A|_],L):- membro(A,L).
+ver_comuns([_|B],L):- ver_comuns(B,L).
