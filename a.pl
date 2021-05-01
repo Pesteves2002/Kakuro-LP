@@ -65,9 +65,15 @@ split([X|T], E, [X|LL], LR) :-
     split(T, E, LL, LR).
 
 
-espacos_fila(H_V,Fila,Esp):- setof(Aux,espaco_fila(Fila,Aux,H_V),Esp),!.
+espacos_fila(H_V,Fila,Esp):- bagof(Aux,espaco_fila(Fila,Aux,H_V),Esp),!.
 espacos_fila(_,_,[]).
 
-espacos_puzzle(Puzzle,_):- espacos_fila(h,Linha,Puzzle),writeln(Linha).
 
-% ,writeln(Linha),mat_transposta(Puzzle,Puzzle_transposta), espacos_fila(v,Coluna,Puzzle_transposta),writeln(Coluna).
+% espacos_puzzle(Puzzle,Espacos)
+le_puzzle([],[],_).
+
+le_puzzle([A|Res],Junto,H_V):- espacos_fila(H_V,A,Resultado),Resultado \== [],append(Resultado,Espacos,Junto),le_puzzle(Res,Espacos,H_V),!.
+le_puzzle([A|Res],Espacos,H_V):- espacos_fila(H_V,A,Resultado),Resultado == [],le_puzzle(Res,Espacos,H_V),!.
+
+espacos_puzzle(Fila,Res):- le_puzzle(Fila,A,h), mat_transposta(Fila,Transposta), le_puzzle(Transposta,B,v),append(A,B,Res).
+
