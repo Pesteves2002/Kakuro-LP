@@ -23,6 +23,8 @@ cria_espaco([A|Res],v,espaco(W,Res)):- A = [W|_].
 
 cria_espaco([A|Res],h,espaco(W,Res)):- A = [_,W|_].
 
+lista_espaco(espaco(_,Lista),Lista).
+
 
 % caso de paragem
 espaco_fila(Fila,Esp,H_V):- include(is_list,Fila,C),
@@ -76,4 +78,34 @@ le_puzzle([A|Res],Junto,H_V):- espacos_fila(H_V,A,Resultado),Resultado \== [],ap
 le_puzzle([A|Res],Espacos,H_V):- espacos_fila(H_V,A,Resultado),Resultado == [],le_puzzle(Res,Espacos,H_V),!.
 
 espacos_puzzle(Fila,Res):- le_puzzle(Fila,A,h), mat_transposta(Fila,Transposta), le_puzzle(Transposta,B,v),append(A,B,Res).
+
+
+%  espacos_com_posicoes_comuns(Espacos, Esp, Esps_com)
+espacos_com_posicoes_comuns([],_,[]).
+
+
+espacos_com_posicoes_comuns([A|Res],Esp,Esps_com):- lista_espaco(A,Lst),
+                                                     lista_espaco(Esp,Num),
+                                                     \+ ver_comuns(Lst,Num),!,
+                                                     espacos_com_posicoes_comuns(Res,Esp,Esps_com),!.
+
+espacos_com_posicoes_comuns([A|Res],Esp,[A|Esps_com]):- lista_espaco(A,Lst),
+                                                     lista_espaco(Esp,Num),
+                                                      ver_comuns(Lst,Num),
+                                                      A \== Esp,
+                                                      espacos_com_posicoes_comuns(Res,Esp,Esps_com),!.
+
+espacos_com_posicoes_comuns([A|Res],Esp,Esps_com):- A == Esp,
+                                                    espacos_com_posicoes_comuns(Res,Esp,Esps_com),!.
+
+
+% para cada elemento da lista.
+
+
+membro(B,[A|_]):- B == A,!.
+membro(B,[_|Res]):- membro(B,Res).
+
+ver_comuns([A|_],L):- membro(A,L).
+ver_comuns([_|B],L):- ver_comuns(B,L).
+
 
