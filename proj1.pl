@@ -41,6 +41,9 @@ cria_espaco([A|Res],h,espaco(W,Res)):- A = [_,W|_].
 espaco_fila(Fila,Esp,H_V):- include(is_list,Fila,C),
                            length(C,Tam),
                            Tam == 1,
+                           Fila = [A|B],
+                           A \== [0,0],
+                           B \== [],
                            cria_espaco(Fila,H_V,Esp),!.
 
 %criar espaco
