@@ -24,6 +24,7 @@ cria_espaco([A|Res],v,espaco(W,Res)):- A = [W|_].
 cria_espaco([A|Res],h,espaco(W,Res)):- A = [_,W|_].
 
 lista_espaco(espaco(_,Lista),Lista).
+numero_espaco(espaco(Num,_),Num).
 
 
 % caso de paragem
@@ -101,11 +102,19 @@ espacos_com_posicoes_comuns([A|Res],Esp,Esps_com):- A == Esp,
 
 % para cada elemento da lista.
 
-
 membro(B,[A|_]):- B == A,!.
 membro(B,[_|Res]):- membro(B,Res).
 
 ver_comuns([A|_],L):- membro(A,L).
 ver_comuns([_|B],L):- ver_comuns(B,L).
 
+% permutacoes_soma_espacos([espaco(3,[P24,P25])], Perms_soma).
+% permutacoes_soma_espacos(Espacos, Perms_soma)
+permutacoes_soma_espacos([],[]).
 
+permutacoes_soma_espacos([A|Res],[Novo|Final]):- lista_espaco(A,Lst),
+                                                length(Lst,N),
+                                                numero_espaco(A,Soma),
+                                                permutacoes_soma(N, [1,2,3,4,5,6,7,8,9], Soma, Perms),
+                                                append([A],[Perms],Novo),
+                                                permutacoes_soma_espacos(Res,Final).

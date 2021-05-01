@@ -38,6 +38,8 @@ cria_espaco([A|Res],h,espaco(W,Res)):- A = [_,W|_].
 
 lista_espaco(espaco(_,Lista),Lista).
 
+numero_espaco(espaco(Num,_),Num).
+
 
 % caso de paragem
 espaco_fila(Fila,Esp,H_V):- include(is_list,Fila,C),
@@ -144,3 +146,19 @@ membro(B,[_|Res]):- membro(B,Res).
 ver_comuns([A|_],L):- membro(A,L).
 ver_comuns([_|B],L):- ver_comuns(B,L).
 
+%-------------------------------------------------------------------------------
+%             permutacoes_soma_espacos(Espacos, Perms_soma)
+% Espacos é uma lista de espaços, 
+% significa que Perms_soma é a lista de listas de 2 elementos,
+% em que o 1o elemento é um espaço de Espacos e 
+% o 2o é a lista ordenada de permutações cuja soma é igual à soma do espaço
+%-------------------------------------------------------------------------------
+
+permutacoes_soma_espacos([],[]).
+
+permutacoes_soma_espacos([Esp|Res_espacos],[Novo|Perms_soma]):- lista_espaco(Esp,Lst),
+                                                length(Lst,N),
+                                                numero_espaco(Esp,Soma),
+                                                permutacoes_soma(N, [1,2,3,4,5,6,7,8,9], Soma, Perms),
+                                                append([Esp],[Perms],Novo),
+                                                permutacoes_soma_espacos(Res_espacos,Perms_soma).
