@@ -28,6 +28,9 @@ cria_espaco([A|Res],h,espaco(W,Res)):- A = [_,W|_].
 espaco_fila(Fila,Esp,H_V):- include(is_list,Fila,C),
                            length(C,Tam),
                            Tam == 1,
+                           Fila = [A|B],
+                           A \== [0,0],
+                           B \== [],
                            cria_espaco(Fila,H_V,Esp),!.
 
 %criar espaco
@@ -65,5 +68,6 @@ split([X|T], E, [X|LL], LR) :-
 espacos_fila(H_V,Fila,Esp):- setof(Aux,espaco_fila(Fila,Aux,H_V),Esp),!.
 espacos_fila(_,_,[]).
 
+espacos_puzzle(Puzzle,_):- espacos_fila(h,Linha,Puzzle),writeln(Linha).
 
-
+% ,writeln(Linha),mat_transposta(Puzzle,Puzzle_transposta), espacos_fila(v,Coluna,Puzzle_transposta),writeln(Coluna).
