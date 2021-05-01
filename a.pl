@@ -79,6 +79,7 @@ le_puzzle([A|Res],Espacos,H_V):- espacos_fila(H_V,A,Resultado),Resultado == [],l
 
 espacos_puzzle(Fila,Res):- le_puzzle(Fila,A,h), mat_transposta(Fila,Transposta), le_puzzle(Transposta,B,v),append(A,B,Res).
 
+
 %  espacos_com_posicoes_comuns(Espacos, Esp, Esps_com)
 espacos_com_posicoes_comuns([],_,[]).
 
@@ -106,4 +107,5 @@ membro(B,[_|Res]):- membro(B,Res).
 
 ver_comuns([A|_],L):- membro(A,L).
 ver_comuns([_|B],L):- ver_comuns(B,L).
+
 

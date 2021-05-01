@@ -143,3 +143,4 @@ membro(B,[_|Res]):- membro(B,Res).
 
 ver_comuns([A|_],L):- membro(A,L).
 ver_comuns([_|B],L):- ver_comuns(B,L).
+
