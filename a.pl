@@ -119,22 +119,30 @@ permutacoes_soma_espacos([A|Res],[Novo|Final]):- lista_espaco(A,Lst),
                                                 append([A],[Perms],Novo),
                                                 permutacoes_soma_espacos(Res,Final).
 
-% permutacao_possivel_espaco(Perm, Esp, Espacos, Perms_soma)
+permutacao_possivel_espaco(Perm, Esp, Espacos, _):- permutacoes_soma_espacos([Esp],B),
+                                 B = [[_|D]|_],
+                                 D = [E|_],
+                                espacos_com_posicoes_comuns(Espacos, Esp, Aux),
+                                    permutacoes_soma_espacos(Aux,A),
+                                    apanhar_lista(A,J),
+                                 permutacao_possivel_espaco(Perm, Esp, Espacos, _,E,J).
 
-permutacao_possivel_espaco(Perm, Esp, Espacos, _,A,B,F,E,J) :- espacos_com_posicoes_comuns(Espacos, Esp, Perm),
-                                                        permutacoes_soma_espacos(Perm,A),
-                                                            permutacoes_soma_espacos([Esp],B),A = [C|_],
-                                                            C = [_|F],
-                                                            B = [[_|D]|_],D = [E|_],
-                                                            apanhar_lista(A,J),
-                                                            ola([9,8],J),writeln(sucesso).
-                                                            
-                                                            
+permutacao_possivel_espaco(_,_,_,_,[]).
+
+permutacao_possivel_espaco(A, _, _, _,[A|_],J):- ola(A,J).
+                                        
+
+
+permutacao_possivel_espaco(A, Esp, Espacos, _,[Perm|Res],J):-  ola(Perm,J),
+                                        permutacao_possivel_espaco(A, Esp, Espacos, _,Res,J).
+
+permutacao_possivel_espaco(A, Esp, Espacos, _,[Perm|Res],J):- \+ ola(Perm,J),
+                                        permutacao_possivel_espaco(A, Esp, Espacos, _,Res,J).
+                             
 
 % ver se o elemento pertence a pelo menos um conjunto de listas
 pertence_a_1_lista(El, Listas) :-member(Lista, Listas),
                     member(El, Lista),!.
-
 
 
 % ola([1,9],[[1,2,3],[9,8,7]]).
@@ -145,3 +153,5 @@ ola([A|Perms],[B|Espacos]):- pertence_a_1_lista(A,B),ola(Perms,Espacos).
 % faz a lista de lista com espacos possiveis
 apanhar_lista([],[]).
 apanhar_lista([A|Lista],Novo):- A= [_|Perms],append(Perms,Res,Novo),apanhar_lista(Lista,Res).
+
+

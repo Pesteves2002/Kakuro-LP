@@ -121,32 +121,25 @@ permutacoes_soma_espacos([A|Res],[Novo|Final]):- lista_espaco(A,Lst),
 
 % permutacao_possivel_espaco(Perm, Esp, Espacos, Perms_soma)
 
-permutacao_possivel_espaco(Perm, Esp, Espacos, _,B,E,J) :- espacos_com_posicoes_comuns(Espacos, Esp, Perm),
-                                                            permutacoes_soma_espacos(Perm,A),
-                                                            permutacoes_soma_espacos([Esp],B),
-                                                            B = [[_|D]|_],D = [E|_],
-                                                            apanhar_lista(A,J),
-                                                            ola(D,J).
-
-
-
-funciona(Perm, Esp, Espacos, _):- permutacoes_soma_espacos([Esp],B),
+permutacao_possivel_espaco(Perm, Esp, Espacos, _):- permutacoes_soma_espacos([Esp],B),
                                  B = [[_|D]|_],
                                  D = [E|_],
                                 espacos_com_posicoes_comuns(Espacos, Esp, Aux),
                                     permutacoes_soma_espacos(Aux,A),
                                     apanhar_lista(A,J),
-                                    writeln(E),
-                                    writeln(J),
-                                 funciona(Perm, Esp, Espacos, _,E,J).
+                                 permutacao_possivel_espaco(Perm, Esp, Espacos, _,E,J).
 
-funciona(_,_,_,_,[]).
+permutacao_possivel_espaco(_,_,_,_,[]).
 
-funciona(Perm, Esp, Espacos, _,Perm,J):- ola(Perm,J),
-                                        funciona(Perm, Esp, Espacos, _,Res,J).
+permutacao_possivel_espaco(A, _, _, _,[A|_],J):- ola(A,J).
+                                        
 
-funciona(A, Esp, Espacos, _,[Perm|Res],J):- \+ ola(Perm,J),
-                                        funciona(A, Esp, Espacos, _,Res,J).
+
+permutacao_possivel_espaco(A, Esp, Espacos, _,[Perm|Res],J):-  ola(Perm,J),
+                                        permutacao_possivel_espaco(A, Esp, Espacos, _,Res,J).
+
+permutacao_possivel_espaco(A, Esp, Espacos, _,[Perm|Res],J):- \+ ola(Perm,J),
+                                        permutacao_possivel_espaco(A, Esp, Espacos, _,Res,J).
                              
 
 % ver se o elemento pertence a pelo menos um conjunto de listas

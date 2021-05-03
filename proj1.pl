@@ -169,3 +169,38 @@ permutacoes_soma_espacos([Esp|Res_espacos],[Novo|Perms_soma]):- lista_espaco(Esp
 % Perms_soma é uma lista de listas tal como obtida pelo predicado anterior,
 % significa que Perm é uma permutação possível para o espaço Esp.
 %-------------------------------------------------------------------------------
+
+permutacao_possivel_espaco(Perm, Esp, Espacos, _):- permutacoes_soma_espacos([Esp],B),
+                                 B = [[_|D]|_],
+                                 D = [E|_],
+                                espacos_com_posicoes_comuns(Espacos, Esp, Aux),
+                                    permutacoes_soma_espacos(Aux,A),
+                                    apanhar_lista(A,J),
+                                 permutacao_possivel_espaco(Perm, Esp, Espacos, _,E,J).
+
+permutacao_possivel_espaco(_,_,_,_,[]).
+
+permutacao_possivel_espaco(A, _, _, _,[A|_],J):- verificar_se_pertence(A,J).
+                                        
+
+
+permutacao_possivel_espaco(A, Esp, Espacos, _,[Perm|Res],J):-  verificar_se_pertence(Perm,J),
+                                        permutacao_possivel_espaco(A, Esp, Espacos, _,Res,J).
+
+permutacao_possivel_espaco(A, Esp, Espacos, _,[Perm|Res],J):- \+ verificar_se_pertence(Perm,J),
+                                        permutacao_possivel_espaco(A, Esp, Espacos, _,Res,J).
+                             
+
+% ver se o elemento pertence a pelo menos um conjunto de listas
+pertence_a_1_lista(El, Listas) :-member(Lista, Listas),
+                    member(El, Lista),!.
+
+
+% verificar_se_pertence([1,9],[[1,2,3],[9,8,7]]).
+% ver se uma lista pertence a uma quantidade de listas
+verificar_se_pertence([],[]).
+verificar_se_pertence([A|Perms],[B|Espacos]):- pertence_a_1_lista(A,B),verificar_se_pertence(Perms,Espacos).
+
+% faz a lista de lista com espacos possiveis
+apanhar_lista([],[]).
+apanhar_lista([A|Lista],Novo):- A= [_|Perms],append(Perms,Res,Novo),apanhar_lista(Lista,Res).
