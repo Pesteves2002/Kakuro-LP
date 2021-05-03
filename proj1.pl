@@ -162,3 +162,10 @@ permutacoes_soma_espacos([Esp|Res_espacos],[Novo|Perms_soma]):- lista_espaco(Esp
                                                 permutacoes_soma(N, [1,2,3,4,5,6,7,8,9], Soma, Perms),
                                                 append([Esp],[Perms],Novo),
                                                 permutacoes_soma_espacos(Res_espacos,Perms_soma).
+
+%-------------------------------------------------------------------------------
+%             permutacao_possivel_espaco(Perm, Esp, Espacos, Perms_soma)
+% Perm é uma permutação, Esp é um espaço, Espacos é uma lista de espaços, e
+% Perms_soma é uma lista de listas tal como obtida pelo predicado anterior,
+% significa que Perm é uma permutação possível para o espaço Esp.
+%-------------------------------------------------------------------------------
