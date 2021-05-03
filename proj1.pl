@@ -222,3 +222,17 @@ permutacoes_possiveis_espaco(Espacos, _, Esp,Perms_poss):- bagof(Aux,permutacao_
 % Espacos é uma lista de espaços,
 % Perms_poss_esps é a lista de permutações possíveis
 %-------------------------------------------------------------------------------
+
+% needs optimization
+permutacoes_possiveis_espacos(Espacos, Perms_poss_esps):- permutacoes_possiveis_espacos(Espacos, Perms_poss_esps,Espacos).
+permutacoes_possiveis_espacos([], [],_). 
+permutacoes_possiveis_espacos([Esp|Espacos], [Perms|Perms_poss_esps],Todos):- permutacoes_possiveis_espaco(Todos, _, Esp,Perms),
+                                                                    permutacoes_possiveis_espacos(Espacos, Perms_poss_esps,Todos).
+
+%-------------------------------------------------------------------------------
+%               numeros_comuns(Lst_Perms, Numeros_comuns)
+% Lst_Perms é uma lista de permutações,
+% Numeros_comuns é uma lista de pares (pos, numero),
+% significando que todas as listas de Lst_Perms contêm
+% o número numero na posição pos.
+%-------------------------------------------------------------------------------

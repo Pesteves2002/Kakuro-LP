@@ -159,4 +159,10 @@ permutacoes_possiveis_espaco(Espacos, _, Esp,Perms_poss):- bagof(Aux,permutacao_
 
 %permutacoes_possiveis_espacos(Espacos, Perms_poss_esps)
 
-permutacoes_possiveis_espacos(Espacos, Perms_poss_esps):- bagof(Aux,permutacoes_possiveis_espaco(Espacos, _, Aux, _),Perms_poss_esps).
+permutacoes_possiveis_espacos(Espacos, Perms_poss_esps):- permutacoes_possiveis_espacos(Espacos, Perms_poss_esps,Espacos).
+permutacoes_possiveis_espacos([], [],_). 
+permutacoes_possiveis_espacos([Esp|Espacos], [Perms|Perms_poss_esps],Todos):- permutacoes_possiveis_espaco(Todos, _, Esp,Perms),
+                                                                    permutacoes_possiveis_espacos(Espacos, Perms_poss_esps,Todos).
+
+% numeros_comuns(Lst_Perms, Numeros_comuns)
+
