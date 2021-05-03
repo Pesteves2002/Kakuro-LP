@@ -204,3 +204,35 @@ verificar_se_pertence([A|Perms],[B|Espacos]):- pertence_a_1_lista(A,B),verificar
 % faz a lista de lista com espacos possiveis
 apanhar_lista([],[]).
 apanhar_lista([A|Lista],Novo):- A= [_|Perms],append(Perms,Res,Novo),apanhar_lista(Lista,Res).
+
+%-------------------------------------------------------------------------------
+%       permutacoes_possiveis_espaco(Espacos, Perms_soma, Esp,Perms_poss)
+% Espacos é uma lista de espaços,
+% Perms_soma é uma listade listas tal como obtida pelo predicado permutacoes_soma_espacos,
+% Esp é um espaço, significa que Perms_poss é uma lista de 2 elementos em que
+% o primeiro é a lista de variáveis de Esp e
+% o segundo é a lista ordenada de permutações possíveis para o espaço Esp.
+%-------------------------------------------------------------------------------
+
+permutacoes_possiveis_espaco(Espacos, _, Esp,Perms_poss):- bagof(Aux,permutacao_possivel_espaco(Aux, Esp, Espacos, _),B),
+                                                            lista_espaco(Esp,A),append([A],[B],Perms_poss),!.
+
+%-------------------------------------------------------------------------------
+%       permutacoes_possiveis_espacos(Espacos, Perms_poss_esps)
+% Espacos é uma lista de espaços,
+% Perms_poss_esps é a lista de permutações possíveis
+%-------------------------------------------------------------------------------
+
+% needs optimization
+permutacoes_possiveis_espacos(Espacos, Perms_poss_esps):- permutacoes_possiveis_espacos(Espacos, Perms_poss_esps,Espacos).
+permutacoes_possiveis_espacos([], [],_). 
+permutacoes_possiveis_espacos([Esp|Espacos], [Perms|Perms_poss_esps],Todos):- permutacoes_possiveis_espaco(Todos, _, Esp,Perms),
+                                                                    permutacoes_possiveis_espacos(Espacos, Perms_poss_esps,Todos).
+
+%-------------------------------------------------------------------------------
+%               numeros_comuns(Lst_Perms, Numeros_comuns)
+% Lst_Perms é uma lista de permutações,
+% Numeros_comuns é uma lista de pares (pos, numero),
+% significando que todas as listas de Lst_Perms contêm
+% o número numero na posição pos.
+%-------------------------------------------------------------------------------
