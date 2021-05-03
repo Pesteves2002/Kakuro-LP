@@ -144,8 +144,6 @@ permutacao_possivel_espaco(A, Esp, Espacos, _,[Perm|Res],J):- \+ ola(Perm,J),
 pertence_a_1_lista(El, Listas) :-member(Lista, Listas),
                     member(El, Lista),!.
 
-
-% ola([1,9],[[1,2,3],[9,8,7]]).
 % ver se uma lista pertence a uma quantidade de listas
 ola([],[]).
 ola([A|Perms],[B|Espacos]):- pertence_a_1_lista(A,B),ola(Perms,Espacos).
@@ -154,4 +152,11 @@ ola([A|Perms],[B|Espacos]):- pertence_a_1_lista(A,B),ola(Perms,Espacos).
 apanhar_lista([],[]).
 apanhar_lista([A|Lista],Novo):- A= [_|Perms],append(Perms,Res,Novo),apanhar_lista(Lista,Res).
 
+% permutacoes_possiveis_espaco(Espacos, Perms_soma, Esp,Perms_poss)
 
+permutacoes_possiveis_espaco(Espacos, _, Esp,Perms_poss):- bagof(Aux,permutacao_possivel_espaco(Aux, Esp, Espacos, _),B),
+                                                            lista_espaco(Esp,A),append([A],[B],Perms_poss).
+
+%permutacoes_possiveis_espacos(Espacos, Perms_poss_esps)
+
+permutacoes_possiveis_espacos(Espacos, Perms_poss_esps):- bagof(Aux,permutacoes_possiveis_espaco(Espacos, _, Aux, _),Perms_poss_esps).
