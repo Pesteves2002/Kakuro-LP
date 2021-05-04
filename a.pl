@@ -166,3 +166,27 @@ permutacoes_possiveis_espacos([Esp|Espacos], [Perms|Perms_poss_esps],Todos):- pe
 
 % numeros_comuns(Lst_Perms, Numeros_comuns)
 
+numeros_comuns(L,Res) :- obter_vetor_comum(L,A),numeros_comuns(A,1,Res).
+
+numeros_comuns([], _,[]).
+numeros_comuns([P | R], N,[Espaco|Res]) :- N1 is N + 1,
+                                P \== 0,
+                                Espaco = (N,P),
+                                numeros_comuns(R,N1,Res),!.
+
+numeros_comuns([P | R], N,Res) :-
+                                P == 0,
+                                N1 is N + 1,
+                                numeros_comuns(R,N1,Res).
+
+obter_vetor_comum([A],A).
+obter_vetor_comum([A|B],L):-  mesmo_sitio(Res,A,L), obter_vetor_comum(B,Res),!.
+
+mesmo_sitio([],[],[]).
+
+mesmo_sitio([B|L1],[B|L2],[B|Res]):-   mesmo_sitio(L1,L2,Res).
+
+mesmo_sitio([B|L1],[D|L2],[0|Res]):- B \== D, mesmo_sitio(L1,L2,Res).
+
+
+
