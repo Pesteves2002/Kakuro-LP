@@ -261,3 +261,25 @@ mesmo_sitio([],[],[]).
 mesmo_sitio([B|L1],[B|L2],[B|Res]):-   mesmo_sitio(L1,L2,Res).
 
 mesmo_sitio([B|L1],[D|L2],[0|Res]):- B \== D, mesmo_sitio(L1,L2,Res).
+
+%-------------------------------------------------------------------------------
+%               atribui_comuns(Perms_Possiveis)
+% Perms_Possiveis é uma lista de permutações possíveis,
+% actualiza esta lista atribuindo a cada espaço números comuns a
+% todas as permutações possíveis para esse espaço
+%-------------------------------------------------------------------------------
+
+atribui_comuns([]).
+
+atribui_comuns([A|Perms_Possiveis]):- nth1(1,A,D),nth1(2,A,L),
+                                        numeros_comuns(L,Lista),
+                                        Lista \== [],
+                                        juntar(D,Lista),
+                                        atribui_comuns(Perms_Possiveis).
+
+ atribui_comuns([A|Perms_Possiveis]):- A = [_|_],atribui_comuns(Perms_Possiveis).
+                                    
+% funcao auxiliar que substitui valores
+juntar(_,[]).
+
+juntar(D,[A|Lista]):- nth1(Pos,D,Valor), A = (Pos,Valor), juntar(D,Lista).
