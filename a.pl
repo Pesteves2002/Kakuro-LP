@@ -150,7 +150,7 @@ ola([A|Perms],[B|Espacos]):- pertence_a_1_lista(A,B),ola(Perms,Espacos).
 
 % faz a lista de lista com espacos possiveis
 apanhar_lista([],[]).
-apanhar_lista([A|Lista],Novo):- A= [_|Perms],append(Perms,Res,Novo),apanhar_lista(Lista,Res).
+apanhar_lista([A|Lista],Novo):- A = [_|Perms],append(Perms,Res,Novo),apanhar_lista(Lista,Res).
 
 % permutacoes_possiveis_espaco(Espacos, Perms_soma, Esp,Perms_poss)
 
@@ -188,5 +188,54 @@ mesmo_sitio([B|L1],[B|L2],[B|Res]):-   mesmo_sitio(L1,L2,Res).
 
 mesmo_sitio([B|L1],[D|L2],[0|Res]):- B \== D, mesmo_sitio(L1,L2,Res).
 
+atribui_comuns([]).
+
+atribui_comuns([A|Perms_Possiveis]):- nth1(1,A,D),nth1(2,A,L),
+                                        numeros_comuns(L,Lista),
+                                        Lista \== [],
+                                        juntar(D,Lista),
+                                        atribui_comuns(Perms_Possiveis).
+
+ atribui_comuns([A|Perms_Possiveis]):- A = [_|_],atribui_comuns(Perms_Possiveis),!.
+                                    
+% funcao auxiliar que substitui valores
+juntar(_,[]).
+
+juntar(D,[A|Lista]):- nth1(Pos,D,Valor), A = (Pos,Valor), juntar(D,Lista).
 
 
+
+% obtem a lista de perms_ possiveis para espacos
+obter_lista([],[]).
+
+obter_lista([A|Res],[L|Resto]):- A = [B|C], C = [D|_],L = [B|D],  obter_lista(Res,Resto),!.
+
+
+% verificar se o elmento duma lista e var ou nao
+
+verificar([],[]).
+verificar([A|Resto],[0|Res]):- var(A), verificar(Resto,Res),!.
+
+verificar([A|Resto],[A|Res]):- nonvar(A), verificar(Resto,Res),!.
+
+filtra([],_,[]).
+
+filtra([A|Lst_Perms],Filtro,[A|Res]):- possivel(A,Filtro),  filtra(Lst_Perms,Filtro,Res),!.
+filtra([A|Lst_Perms],Filtro,Res):- \+ possivel(A,Filtro),  filtra(Lst_Perms,Filtro,Res),!.
+
+
+%verifica se a permutacao e possivel
+possivel([],[]).
+
+possivel([_|Res],[B|C]):- B == 0, possivel(Res,C),!.
+possivel([A|Res],[B|C]):- B == A, possivel(Res,C),!.
+
+% retira_impossiveis(Perms_Possiveis, Novas_Perms_Possiveis)
+
+retira_impossiveis(Perms_Possiveis,Res):- obter_lista(Perms_Possiveis,L),tudo(L,Res),!.
+
+tudo([],[]).
+
+tudo([F|List],[M|Res]):- F = [A|B],
+                verificar(A,Filtro),
+                filtra(B,Filtro,J), M = [A|[J]],tudo(List,Res),!.
