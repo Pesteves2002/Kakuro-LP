@@ -283,3 +283,46 @@ atribui_comuns([A|Perms_Possiveis]):- nth1(1,A,D),nth1(2,A,L),
 juntar(_,[]).
 
 juntar(D,[A|Lista]):- nth1(Pos,D,Valor), A = (Pos,Valor), juntar(D,Lista).
+
+%-------------------------------------------------------------------------------
+%               retira_impossiveis(Perms_Possiveis, Novas_Perms_Possiveis)
+% Perms_Possiveis é uma lista de permutações possíveis,
+% significa que Novas_Perms_Possiveis é
+% o resultado de tirar permutações impossíveis de Perms_Possiveis
+%-------------------------------------------------------------------------------
+
+retira_impossiveis(Perms_Possiveis,Res):- obter_lista(Perms_Possiveis,L),retira_impossiveis_aux(L,Res),!.
+
+retira_impossiveis_aux([],[]).
+
+retira_impossiveis_aux([F|List],[M|Res]):- F = [A|B],
+                verificar(A,Filtro),
+                filtra(B,Filtro,J), M = [A|[J]],retira_impossiveis_aux(List,Res),!.
+
+% funcao que obtem a lista de perms_possiveis para espacos
+obter_lista([],[]).
+
+obter_lista([A|Res],[L|Resto]):- A = [B|C], C = [D|_],L = [B|D],  obter_lista(Res,Resto),!.
+
+
+% funcao que verificar se o elmento duma lista e variavel ou nao
+
+verificar([],[]).
+verificar([A|Resto],[0|Res]):- var(A), verificar(Resto,Res),!.
+
+verificar([A|Resto],[A|Res]):- nonvar(A), verificar(Resto,Res),!.
+
+
+% funcao que ve se uma permutacao pode esta de acordo com o filtro
+filtra([],_,[]).
+
+filtra([A|Lst_Perms],Filtro,[A|Res]):- possivel(A,Filtro),  filtra(Lst_Perms,Filtro,Res),!.
+filtra([A|Lst_Perms],Filtro,Res):- \+ possivel(A,Filtro),  filtra(Lst_Perms,Filtro,Res),!.
+
+
+%verifica se a permutacao e possivel
+possivel([],[]).
+
+possivel([_|Res],[B|C]):- B == 0, possivel(Res,C),!.
+possivel([A|Res],[B|C]):- B == A, possivel(Res,C),!.
+
