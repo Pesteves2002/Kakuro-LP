@@ -9,7 +9,7 @@
 %-------------------------------------------------------------------------------
 
 
-combinacoes_soma(N, Els,Soma,Combs):- bagof(L, combinacao(N,Els,L), A),findall(X, (member(X,A),sumlist(X,Soma)),Combs),!.
+combinacoes_soma(N, Els,Soma,Combs):- bagof(L, (combinacao(N,Els,L), sumlist(L,Soma)), Combs),!.
 combinacoes_soma(_, _,_, []).
 
 %-------------------------------------------------------------------------------
@@ -19,11 +19,11 @@ combinacoes_soma(_, _,_, []).
 % dos elementos de Els cuja soma éSoma .
 %-------------------------------------------------------------------------------
 
-permutacoes_soma(N, Els, Soma, Perms):- combinacoes_soma(N,Els,Soma,A),permutacoes(A,C),sort(C,Perms),!.
+permutacoes_soma(N, Els, Soma, Perms):- combinacoes_soma(N,Els,Soma,A),
+                                        permutacoes(A,C),sort(C,Perms),!.
 
 permutacoes([],[]).
-permutacoes([A|B], Sol) :-
-   bagof(P, permutation(A,P), Res),append(C,Res,Sol), permutacoes(B,C),!.
+permutacoes(Lista, Res) :- findall(P,(member(Perm,Lista),permutation(P,Perm)), Res).
 
 %-------------------------------------------------------------------------------
 %                      espaco_fila(Fila, Esp, H_V),
