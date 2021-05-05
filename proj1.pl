@@ -326,3 +326,11 @@ possivel([],[]).
 possivel([_|Res],[B|C]):- B == 0, possivel(Res,C),!.
 possivel([A|Res],[B|C]):- B == A, possivel(Res,C),!.
 
+%-------------------------------------------------------------------------------
+%              simplifica(Perms_Possiveis, Novas_Perms_Possiveis)
+% Perms_Possiveis é uma lista de permutações possíveis,
+% Novas_Perms_Possiveis é o resultado de simplificar Perms_Possiveis.
+% Para simplificar uma lista de permutações possíveis,
+% deve aplicar-lhe os predicados atribui_comuns e retira_impossiveis,
+% por esta ordem, até não haver mais alterações.
+%-------------------------------------------------------------------------------

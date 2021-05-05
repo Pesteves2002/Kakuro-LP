@@ -1,17 +1,14 @@
 :- [codigo_comum, puzzles_publicos].
 
-combinacoes_soma(N, Els,Soma,Combs):- bagof(L, combinacao(N,Els,L), A),
-                                      setof(X, (member(X,A),sumlist(X,Soma)),Combs),!.
+combinacoes_soma(N, Els,Soma,Combs):- bagof(L, (combinacao(N,Els,L), sumlist(L,Soma)), Combs),!.
+  
 combinacoes_soma(_, _,_, []).
 
 permutacoes_soma(N, Els, Soma, Perms):- combinacoes_soma(N,Els,Soma,A),
                                         permutacoes(A,C),sort(C,Perms),!.
 
 permutacoes([],[]).
-permutacoes([A|B], Sol) :- bagof(P, permutation(A,P), Res),
-                           append(C,Res,Sol),
-                           permutacoes(B,C), !.
-
+permutacoes(Lista, Res) :- findall(P,(member(Perm,Lista),permutation(P,Perm)), Res).
 
 
 % espaco_fila(Fila,Esp,H_V)
@@ -239,3 +236,5 @@ tudo([],[]).
 tudo([F|List],[M|Res]):- F = [A|B],
                 verificar(A,Filtro),
                 filtra(B,Filtro,J), M = [A|[J]],tudo(List,Res),!.
+
+% simplifica(Perms_Possiveis, Novas_Perms_Possiveis)
