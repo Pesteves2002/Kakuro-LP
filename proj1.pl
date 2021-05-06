@@ -353,3 +353,22 @@ simplifica(Perms, Novas) :-
 inicializa(Puzzle, Res):- espacos_puzzle(Puzzle, Espacos),
                         permutacoes_possiveis_espacos(Espacos, Perms_Possiveis),
                         simplifica(Perms_Possiveis,Res).
+
+%-------------------------------------------------------------------------------
+%               escolhe_menos_alternativas(Perms_Possiveis, Escolha)
+% Perms_Possiveis é uma lista de permutações possíveis,
+% Escolha é o elemento de Perms_Possiveis.
+% Se todos os espaços em Perms_Possiveis tiverem associadas listas de
+% permutações unitárias, o predicado deve devolver "falso".
+%-------------------------------------------------------------------------------
+
+% needs improvement
+
+escolhe_menos_alternativas(Perms_Possiveis, Escolha):- escolher(Perms_Possiveis,[Escolha|_],_).
+
+ler_tamanho(L,Res):- L = [_,B],length(B,Res).
+
+escolher([],[],99999).
+escolher([A|L],Res,Antigo):- ler_tamanho(A,Tam),Tam == 1,!, escolher(L,Res,Antigo).
+escolher([A|L],[A|Res],Tam):- ler_tamanho(A,Tam),  escolher(L,Res,Antigo),Antigo >= Tam,!.
+escolher([A|L],Res,Antigo):- ler_tamanho(A,Tam),  escolher(L,Res,Antigo),Antigo < Tam,!.

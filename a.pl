@@ -255,4 +255,18 @@ inicializa(Puzzle, Res):- espacos_puzzle(Puzzle, Espacos),
                         permutacoes_possiveis_espacos(Espacos, Perms_Possiveis),
                         simplifica(Perms_Possiveis,Res).
 
+% escolhe_menos_alternativas(Perms_Possiveis, Escolha)
 
+% escolher([[[X,Y],[[1,2],[3,4]]],[[X,Y],[[1,2]]],[[X,Y],[[5,6],[7,9]]]],Res,X).
+
+escolhe_menos_alternativas(Perms_Possiveis, Escolha):- escolher(Perms_Possiveis,[Escolha|_],_).
+
+ler_tamanho(L,Res):- L = [_,B],length(B,Res).
+
+escolher([],[],99999).
+escolher([A|L],Res,Antigo):- ler_tamanho(A,Tam),Tam == 1,!, escolher(L,Res,Antigo).
+escolher([A|L],[A|Res],Tam):- ler_tamanho(A,Tam),  escolher(L,Res,Antigo),Antigo >= Tam,!.
+escolher([A|L],Res,Antigo):- ler_tamanho(A,Tam),  escolher(L,Res,Antigo),Antigo < Tam,!.
+
+
+                                                         
