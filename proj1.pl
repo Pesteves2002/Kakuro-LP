@@ -334,3 +334,12 @@ possivel([A|Res],[B|C]):- B == A, possivel(Res,C),!.
 % deve aplicar-lhe os predicados atribui_comuns e retira_impossiveis,
 % por esta ordem, até não haver mais alterações.
 %-------------------------------------------------------------------------------
+
+simplifica(Perms_Possiveis, Perms_Possiveis):- atribui_comuns(Perms_Possiveis),
+                                             retira_impossiveis(Perms_Possiveis,Res),
+                                              Res == Perms_Possiveis,!.
+
+simplifica(Perms, Novas) :-
+                        atribui_comuns(Perms),
+                        retira_impossiveis(Perms, Res),
+                        simplifica(Res, Novas).

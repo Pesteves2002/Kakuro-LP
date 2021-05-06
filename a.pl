@@ -193,7 +193,7 @@ atribui_comuns([A|Perms_Possiveis]):- nth1(1,A,D),nth1(2,A,L),
                                         juntar(D,Lista),
                                         atribui_comuns(Perms_Possiveis).
 
- atribui_comuns([A|Perms_Possiveis]):- A = [_|_],atribui_comuns(Perms_Possiveis),!.
+atribui_comuns([A|Perms_Possiveis]):- A = [_|_],atribui_comuns(Perms_Possiveis),!.
                                     
 % funcao auxiliar que substitui valores
 juntar(_,[]).
@@ -238,3 +238,18 @@ tudo([F|List],[M|Res]):- F = [A|B],
                 filtra(B,Filtro,J), M = [A|[J]],tudo(List,Res),!.
 
 % simplifica(Perms_Possiveis, Novas_Perms_Possiveis)
+% Caso de paragem
+
+simplifica(Perms_Possiveis, Perms_Possiveis):- atribui_comuns(Perms_Possiveis),
+                                             retira_impossiveis(Perms_Possiveis,Res),
+                                              Res == Perms_Possiveis,!.
+
+simplifica(Perms, Novas) :-
+                        atribui_comuns(Perms),
+                        retira_impossiveis(Perms, Res),
+                        simplifica(Res, Novas).
+
+
+
+
+
