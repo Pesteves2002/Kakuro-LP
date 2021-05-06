@@ -263,10 +263,19 @@ escolhe_menos_alternativas(Perms_Possiveis, Escolha):- escolher(Perms_Possiveis,
 
 ler_tamanho(L,Res):- L = [_,B],length(B,Res).
 
-escolher([],[],99999).
+escolher([],[],999999).
 escolher([A|L],Res,Antigo):- ler_tamanho(A,Tam),Tam == 1,!, escolher(L,Res,Antigo).
 escolher([A|L],[A|Res],Tam):- ler_tamanho(A,Tam),  escolher(L,Res,Antigo),Antigo >= Tam,!.
 escolher([A|L],Res,Antigo):- ler_tamanho(A,Tam),  escolher(L,Res,Antigo),Antigo < Tam,!.
 
+% experimenta_perm(Escolha, Perms_Possiveis, Novas_Perms_Possiveis)
 
-                                                         
+experimenta_perm(Escolha, Perms_Possiveis, Novas_Perms_Possiveis):- Escolha = [Esp, Lst_Perms],
+                                                            member(Perm,Lst_Perms),
+                                                            Esp = Perm,
+                                                            maplist(igual_escolha(Escolha),Perms_Possiveis,Novas_Perms_Possiveis),!.
+
+igual_escolha(Escolha,E,A):- Escolha == E, Escolha = [Esp|_] ,A = [Esp,[Esp]],!.
+
+igual_escolha(Escolha,E,E):- Escolha \== E.
+

@@ -372,3 +372,24 @@ escolher([],[],99999).
 escolher([A|L],Res,Antigo):- ler_tamanho(A,Tam),Tam == 1,!, escolher(L,Res,Antigo).
 escolher([A|L],[A|Res],Tam):- ler_tamanho(A,Tam),  escolher(L,Res,Antigo),Antigo >= Tam,!.
 escolher([A|L],Res,Antigo):- ler_tamanho(A,Tam),  escolher(L,Res,Antigo),Antigo < Tam,!.
+
+%-------------------------------------------------------------------------------
+%        experimenta_perm(Escolha, Perms_Possiveis, Novas_Perms_Possiveis)
+% Perms_Possiveis é uma lista de permutações possíveis,
+% Escolha é um dos seus elementos (escolhido pelo predicado anterior),
+% Passos:
+% 1. Sendo Esp e Lst_Perms o espaço e a lista de permutações de Escolha, respectivamente,
+% escolhe uma permutação de Lst_Perms, Perm.
+% 2. Unifica Esp com Perm.
+% 3. Novas_Perms_Possiveis é o resultado de substituir, em Perms_Possiveis,
+% o elemento Escolha pelo elemento [Esp, [Perm]].
+%-------------------------------------------------------------------------------
+
+experimenta_perm(Escolha, Perms_Possiveis, Novas_Perms_Possiveis):- Escolha = [Esp, Lst_Perms],
+                                                            member(Perm,Lst_Perms),
+                                                            Esp = Perm,
+                                                            maplist(igual_escolha(Escolha),Perms_Possiveis,Novas_Perms_Possiveis),!.
+
+igual_escolha(Escolha,E,A):- Escolha == E, Escolha = [Esp|_] ,A = [Esp,[Esp]],!.
+
+igual_escolha(Escolha,E,E):- Escolha \== E.
