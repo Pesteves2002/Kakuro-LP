@@ -249,7 +249,10 @@ simplifica(Perms, Novas) :-
                         retira_impossiveis(Perms, Res),
                         simplifica(Res, Novas).
 
+% inicializa(Puzzle, Perms_Possiveis)
 
-
+inicializa(Puzzle, Res):- espacos_puzzle(Puzzle, Espacos),
+                        permutacoes_possiveis_espacos(Espacos, Perms_Possiveis),
+                        simplifica(Perms_Possiveis,Res).
 
 

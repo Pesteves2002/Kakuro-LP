@@ -343,3 +343,13 @@ simplifica(Perms, Novas) :-
                         atribui_comuns(Perms),
                         retira_impossiveis(Perms, Res),
                         simplifica(Res, Novas).
+
+%-------------------------------------------------------------------------------
+%                       inicializa(Puzzle, Perms_Possiveis)
+% Puzzle é um puzzle,
+% Perms_Possiveis é a lista de permutações possíveis simplificada para Puzzle.
+%-------------------------------------------------------------------------------
+
+inicializa(Puzzle, Res):- espacos_puzzle(Puzzle, Espacos),
+                        permutacoes_possiveis_espacos(Espacos, Perms_Possiveis),
+                        simplifica(Perms_Possiveis,Res).
