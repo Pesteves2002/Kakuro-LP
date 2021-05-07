@@ -239,3 +239,8 @@ tudo([F|List],[M|Res]):- F = [A|B],
                 filtra(B,Filtro,J), M = [A|[J]],tudo(List,Res),!.
 
 % simplifica(Perms_Possiveis, Novas_Perms_Possiveis)
+
+
+resolve_aux(Perms_Possiveis, Perms_Possiveis):- escolhe_menos_alternativas(Perms_Possiveis, Escolha),
+                                                experimenta_perm(Escolha, Perms_Possiveis, A),
+                                                simplifica(A, Novas_Perms_Possiveis), Perms_Possiveis == Novas_Perms_Possiveis,!.

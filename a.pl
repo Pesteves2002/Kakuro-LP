@@ -279,3 +279,21 @@ igual_escolha(Escolha,E,A):- Escolha == E, Escolha = [Esp|_] ,A = [Esp,[Esp]],!.
 
 igual_escolha(Escolha,E,E):- Escolha \== E.
 
+% resolve_aux(Perms_Possiveis, Novas_Perms_Possiveis)
+
+% escolhe_menos_alternativas(Perms_Possiveis, Escolha)
+
+% experimenta_perm(Escolha, Perms_Possiveis, Novas_Perms_Possiveis)
+
+% simplifica(Perms_Possiveis, Novas_Perms_Possiveis)
+
+
+resolve_aux(Perms_poss, Novas_Perms_Possiveis):- escolhe_menos_alternativas(Perms_poss, Escolha),
+                                        experimenta_perm(Escolha, Perms_poss, Perms_poss),
+                                        simplifica(Perms_poss, Perms_poss),
+                                        resolve_aux(Perms_poss,Novas_Perms_Possiveis),!.
+
+resolve_aux(Perms_Possiveis, Perms_Possiveis):- \+ escolhe_menos_alternativas(Perms_Possiveis,_),!.
+
+
+
