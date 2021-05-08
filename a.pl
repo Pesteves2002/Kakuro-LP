@@ -289,11 +289,11 @@ igual_escolha(Escolha,E,E):- Escolha \== E.
 
 
 resolve_aux(Perms_poss, Novas_Perms_Possiveis):- escolhe_menos_alternativas(Perms_poss, Escolha),
-                                        experimenta_perm(Escolha, Perms_poss, Perms_poss),
-                                        simplifica(Perms_poss, Perms_poss),
-                                        resolve_aux(Perms_poss,Novas_Perms_Possiveis),!.
+                                        experimenta_perm(Escolha, Perms_poss, A),
+                                        simplifica(A, B),
+                                        resolve_aux(B,Novas_Perms_Possiveis),!.
 
-resolve_aux(Perms_Possiveis, Perms_Possiveis):- \+ escolhe_menos_alternativas(Perms_Possiveis,_),!.
+resolve_aux(Perms_Possiveis, A):- simplifica(Perms_Possiveis,A).
 
 
 
