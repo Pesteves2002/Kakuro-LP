@@ -203,7 +203,7 @@ verificar_se_pertence([A|Perms],[B|Espacos]):- pertence_a_1_lista(A,B),verificar
 
 % faz a lista de lista com espacos possiveis
 apanhar_lista([],[]).
-apanhar_lista([A|Lista],Novo):- A= [_|Perms],append(Perms,Res,Novo),apanhar_lista(Lista,Res).
+apanhar_lista([A|Lista],Novo):- A = [_|Perms],append(Perms,Res,Novo),apanhar_lista(Lista,Res).
 
 %-------------------------------------------------------------------------------
 %       permutacoes_possiveis_espaco(Espacos, Perms_soma, Esp,Perms_poss)
@@ -215,7 +215,7 @@ apanhar_lista([A|Lista],Novo):- A= [_|Perms],append(Perms,Res,Novo),apanhar_list
 %-------------------------------------------------------------------------------
 
 permutacoes_possiveis_espaco(Espacos, _, Esp,Perms_poss):- bagof(Aux,permutacao_possivel_espaco(Aux, Esp, Espacos, _),B),
-                                                            lista_espaco(Esp,A),append([A],[B],Perms_poss),!.
+                                                            lista_espaco(Esp,A),append([A],[B],Perms_poss).
 
 %-------------------------------------------------------------------------------
 %       permutacoes_possiveis_espacos(Espacos, Perms_poss_esps)
@@ -342,7 +342,7 @@ simplifica(Perms_Possiveis, Perms_Possiveis):- atribui_comuns(Perms_Possiveis),
 simplifica(Perms, Novas) :-
                         atribui_comuns(Perms),
                         retira_impossiveis(Perms, Res),
-                        simplifica(Res, Novas).
+                        simplifica(Res, Novas),!.
 
 %-------------------------------------------------------------------------------
 %                       inicializa(Puzzle, Perms_Possiveis)
@@ -388,14 +388,32 @@ escolher([A|L],Res,Antigo):- ler_tamanho(A,Tam),  escolher(L,Res,Antigo),Antigo 
 experimenta_perm(Escolha, Perms_Possiveis, Novas_Perms_Possiveis):- Escolha = [Esp, Lst_Perms],
                                                             member(Perm,Lst_Perms),
                                                             Esp = Perm,
-                                                            maplist(igual_escolha(Escolha),Perms_Possiveis,Novas_Perms_Possiveis),!.
+                                                            maplist(
+                                                        igual_escolha(Escolha),Perms_Possiveis,Novas_Perms_Possiveis).
+
+igual_escolha(Escolha,E,E):- Escolha \== E,!.
 
 igual_escolha(Escolha,E,A):- Escolha == E, Escolha = [Esp|_] ,A = [Esp,[Esp]],!.
-
-igual_escolha(Escolha,E,E):- Escolha \== E.
 
 %-------------------------------------------------------------------------------
 %             resolve_aux(Perms_Possiveis, Novas_Perms_Possiveis)
 % Perms_Possiveis e uma lista de permutacoes possiveis,
 % Novas_Perms_Possiveis e o resultado de aplicar o algoritmo a Perms_Possiveis.
 %-------------------------------------------------------------------------------
+
+resolve_aux(Perms_poss, Novas_Perms_Possiveis):- escolhe_menos_alternativas(Perms_poss, Escolha),!,
+                                        experimenta_perm(Escolha, Perms_poss, A),
+                                        simplifica(A, B),
+                                        resolve_aux(B,Novas_Perms_Possiveis),!.
+
+resolve_aux(Perms_Possiveis, A):- !,simplifica(Perms_Possiveis,A),!.
+
+%-------------------------------------------------------------------------------
+%             resolve(Puz)
+% Puz e um puzzle, resolve esse puzzle
+% apos a invocacao deste predicado a grelha de Puz tem todas as variaveis
+% substituidas por numeros que respeitam as restricoes Puz.
+%-------------------------------------------------------------------------------
+
+resolve(Puz):- inicializa(Puz, A), resolve_aux(A, _).
+

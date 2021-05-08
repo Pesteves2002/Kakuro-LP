@@ -1,4 +1,4 @@
-:- [codigo_comum, puzzles_publicos].
+:- [codigo_comum,puzzles_publicos].
 
 combinacoes_soma(N, Els,Soma,Combs):- bagof(L, (combinacao(N,Els,L), sumlist(L,Soma)), Combs),!.
   
@@ -21,6 +21,7 @@ cria_espaco([A|Res],v,espaco(W,Res)):- A = [W|_].
 cria_espaco([A|Res],h,espaco(W,Res)):- A = [_,W|_].
 
 lista_espaco(espaco(_,Lista),Lista).
+
 numero_espaco(espaco(Num,_),Num).
 
 
@@ -69,33 +70,34 @@ espacos_fila(H_V,Fila,Esp):- bagof(Aux,espaco_fila(Fila,Aux,H_V),Esp),!.
 espacos_fila(_,_,[]).
 
 
-% espacos_puzzle(Puzzle,Espacos)
+espacos_puzzle(Fila,Res):- le_puzzle(Fila,A,h),
+                            mat_transposta(Fila,Transposta),
+                            le_puzzle(Transposta,B,v),
+                            append(A,B,Res).
+
+% funcao auxiliar, ler um puzzle
 le_puzzle([],[],_).
-
-le_puzzle([A|Res],Junto,H_V):- espacos_fila(H_V,A,Resultado),Resultado \== [],append(Resultado,Espacos,Junto),le_puzzle(Res,Espacos,H_V),!.
-le_puzzle([A|Res],Espacos,H_V):- espacos_fila(H_V,A,Resultado),Resultado == [],le_puzzle(Res,Espacos,H_V),!.
-
-espacos_puzzle(Fila,Res):- le_puzzle(Fila,A,h), mat_transposta(Fila,Transposta), le_puzzle(Transposta,B,v),append(A,B,Res).
+% caso de a lista ter espacos
+le_puzzle([A|Res],Junto,H_V):- espacos_fila(H_V,A,Resultado),
+                                Resultado \== [],
+                                append(Resultado,Espacos,Junto),
+                                le_puzzle(Res,Espacos,H_V),!.
+% caso de a lista nao ter espacos
+le_puzzle([A|Res],Espacos,H_V):- A = [_|_],le_puzzle(Res,Espacos,H_V),!.
 
 
 %  espacos_com_posicoes_comuns(Espacos, Esp, Esps_com)
 espacos_com_posicoes_comuns([],_,[]).
 
+espacos_com_posicoes_comuns([A|Res],Esp,Esps_com):- A == Esp,
+                                                    espacos_com_posicoes_comuns(Res,Esp,Esps_com),!.
 
 espacos_com_posicoes_comuns([A|Res],Esp,Esps_com):- lista_espaco(A,Lst),
                                                      lista_espaco(Esp,Num),
                                                      \+ ver_comuns(Lst,Num),!,
                                                      espacos_com_posicoes_comuns(Res,Esp,Esps_com),!.
 
-espacos_com_posicoes_comuns([A|Res],Esp,[A|Esps_com]):- lista_espaco(A,Lst),
-                                                     lista_espaco(Esp,Num),
-                                                      ver_comuns(Lst,Num),
-                                                      A \== Esp,
-                                                      espacos_com_posicoes_comuns(Res,Esp,Esps_com),!.
-
-espacos_com_posicoes_comuns([A|Res],Esp,Esps_com):- A == Esp,
-                                                    espacos_com_posicoes_comuns(Res,Esp,Esps_com),!.
-
+espacos_com_posicoes_comuns([A|Res],Esp,[A|Esps_com]):- espacos_com_posicoes_comuns(Res,Esp,Esps_com),!.
 
 % para cada elemento da lista.
 
@@ -247,7 +249,7 @@ simplifica(Perms_Possiveis, Perms_Possiveis):- atribui_comuns(Perms_Possiveis),
 simplifica(Perms, Novas) :-
                         atribui_comuns(Perms),
                         retira_impossiveis(Perms, Res),
-                        simplifica(Res, Novas).
+                        simplifica(Res, Novas),!.
 
 % inicializa(Puzzle, Perms_Possiveis)
 
@@ -273,11 +275,13 @@ escolher([A|L],Res,Antigo):- ler_tamanho(A,Tam),  escolher(L,Res,Antigo),Antigo 
 experimenta_perm(Escolha, Perms_Possiveis, Novas_Perms_Possiveis):- Escolha = [Esp, Lst_Perms],
                                                             member(Perm,Lst_Perms),
                                                             Esp = Perm,
-                                                            maplist(igual_escolha(Escolha),Perms_Possiveis,Novas_Perms_Possiveis),!.
+                                                            maplist(igual_escolha(Escolha),Perms_Possiveis,Novas_Perms_Possiveis).
+
+igual_escolha(Escolha,E,E):- Escolha \== E,!.
 
 igual_escolha(Escolha,E,A):- Escolha == E, Escolha = [Esp|_] ,A = [Esp,[Esp]],!.
 
-igual_escolha(Escolha,E,E):- Escolha \== E.
+
 
 % resolve_aux(Perms_Possiveis, Novas_Perms_Possiveis)
 
@@ -288,12 +292,14 @@ igual_escolha(Escolha,E,E):- Escolha \== E.
 % simplifica(Perms_Possiveis, Novas_Perms_Possiveis)
 
 
-resolve_aux(Perms_poss, Novas_Perms_Possiveis):- escolhe_menos_alternativas(Perms_poss, Escolha),
+resolve_aux(Perms_poss, Novas_Perms_Possiveis):- escolhe_menos_alternativas(Perms_poss, Escolha),!,
                                         experimenta_perm(Escolha, Perms_poss, A),
                                         simplifica(A, B),
-                                        resolve_aux(B,Novas_Perms_Possiveis),!.
+                                        resolve_aux(B,Novas_Perms_Possiveis).
 
-resolve_aux(Perms_Possiveis, A):- simplifica(Perms_Possiveis,A).
+resolve_aux(Perms_Possiveis, A):- !,simplifica(Perms_Possiveis,A),!.
+
+resolve(Puz):- inicializa(Puz, A), resolve_aux(A, _).
 
 
 
