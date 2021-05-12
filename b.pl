@@ -1,17 +1,14 @@
 :- [codigo_comum, puzzles_publicos].
 
-combinacoes_soma(N, Els,Soma,Combs):- bagof(L, combinacao(N,Els,L), A),
-                                      setof(X, (member(X,A),sumlist(X,Soma)),Combs),!.
+combinacoes_soma(N, Els,Soma,Combs):- bagof(L, (combinacao(N,Els,L), sumlist(L,Soma)), Combs),!.
+  
 combinacoes_soma(_, _,_, []).
 
 permutacoes_soma(N, Els, Soma, Perms):- combinacoes_soma(N,Els,Soma,A),
                                         permutacoes(A,C),sort(C,Perms),!.
 
 permutacoes([],[]).
-permutacoes([A|B], Sol) :- bagof(P, permutation(A,P), Res),
-                           append(C,Res,Sol),
-                           permutacoes(B,C), !.
-
+permutacoes(Lista, Res) :- findall(P,(member(Perm,Lista),permutation(P,Perm)), Res).
 
 
 % espaco_fila(Fila,Esp,H_V)
@@ -119,8 +116,6 @@ permutacoes_soma_espacos([A|Res],[Novo|Final]):- lista_espaco(A,Lst),
                                                 append([A],[Perms],Novo),
                                                 permutacoes_soma_espacos(Res,Final).
 
-% permutacao_possivel_espaco(Perm, Esp, Espacos, Perms_soma)
-
 permutacao_possivel_espaco(Perm, Esp, Espacos, _):- permutacoes_soma_espacos([Esp],B),
                                  B = [[_|D]|_],
                                  D = [E|_],
@@ -146,12 +141,164 @@ permutacao_possivel_espaco(A, Esp, Espacos, _,[Perm|Res],J):- \+ ola(Perm,J),
 pertence_a_1_lista(El, Listas) :-member(Lista, Listas),
                     member(El, Lista),!.
 
-
-% ola([1,9],[[1,2,3],[9,8,7]]).
 % ver se uma lista pertence a uma quantidade de listas
 ola([],[]).
 ola([A|Perms],[B|Espacos]):- pertence_a_1_lista(A,B),ola(Perms,Espacos).
 
 % faz a lista de lista com espacos possiveis
 apanhar_lista([],[]).
-apanhar_lista([A|Lista],Novo):- A= [_|Perms],append(Perms,Res,Novo),apanhar_lista(Lista,Res).
+apanhar_lista([A|Lista],Novo):- A = [_|Perms],append(Perms,Res,Novo),apanhar_lista(Lista,Res).
+
+% permutacoes_possiveis_espaco(Espacos, Perms_soma, Esp,Perms_poss)
+
+permutacoes_possiveis_espaco(Espacos, _, Esp,Perms_poss):- bagof(Aux,permutacao_possivel_espaco(Aux, Esp, Espacos, _),B),
+                                                            lista_espaco(Esp,A),append([A],[B],Perms_poss).
+
+%permutacoes_possiveis_espacos(Espacos, Perms_poss_esps)
+
+
+permutacoes_possiveis_espacos(Espacos, Res):-
+bagof(P,(member(Espaco,Espacos),permutacoes_possiveis_espaco(Espacos, _, Espaco,P)), Res).
+
+% numeros_comuns(Lst_Perms, Numeros_comuns)
+
+numeros_comuns(L,Res) :- obter_vetor_comum(L,A),numeros_comuns(A,1,Res).
+
+numeros_comuns([], _,[]).
+numeros_comuns([P | R], N,[Espaco|Res]) :- N1 is N + 1,
+                                P \== 0,
+                                Espaco = (N,P),
+                                numeros_comuns(R,N1,Res),!.
+
+numeros_comuns([P | R], N,Res) :-
+                                P == 0,
+                                N1 is N + 1,
+                                numeros_comuns(R,N1,Res).
+
+obter_vetor_comum([A],A).
+obter_vetor_comum([A|B],L):-  mesmo_sitio(Res,A,L), obter_vetor_comum(B,Res),!.
+
+mesmo_sitio([],[],[]).
+
+mesmo_sitio([B|L1],[B|L2],[B|Res]):-   mesmo_sitio(L1,L2,Res).
+
+mesmo_sitio([B|L1],[D|L2],[0|Res]):- B \== D, mesmo_sitio(L1,L2,Res).
+
+atribui_comuns([]).
+
+atribui_comuns([A|Perms_Possiveis]):- nth1(1,A,D),nth1(2,A,L),
+                                        numeros_comuns(L,Lista),
+                                        Lista \== [],
+                                        juntar(D,Lista),
+                                        atribui_comuns(Perms_Possiveis).
+
+atribui_comuns([A|Perms_Possiveis]):- A = [_|_],atribui_comuns(Perms_Possiveis),!.
+                                    
+% funcao auxiliar que substitui valores
+juntar(_,[]).
+
+juntar(D,[A|Lista]):- nth1(Pos,D,Valor), A = (Pos,Valor), juntar(D,Lista).
+
+
+
+
+% retira_impossiveis(Perms_Possiveis, Novas_Perms_Possiveis)
+
+retira_impossiveis(Perms_Possiveis,Res):- obter_lista(Perms_Possiveis,L),tudo(L,Res),!.
+
+tudo([],[]).
+
+tudo([F|List],[M|Res]):- F = [A|B],
+                verificar(A,Filtro),
+                filtra(B,Filtro,J),J \== [], M = [A|[J]],tudo(List,Res),!.
+
+obter_lista([],[]).
+
+obter_lista([A|Res],[L|Resto]):- A = [B|C], C = [D|_],L = [B|D],  obter_lista(Res,Resto),!.
+
+
+% verificar se o elmento duma lista e var ou nao
+
+verificar([],[]).
+verificar([A|Resto],[0|Res]):- var(A), verificar(Resto,Res),!.
+
+verificar([A|Resto],[A|Res]):- nonvar(A), verificar(Resto,Res),!.
+
+filtra([],_,[]).
+
+filtra([A|Lst_Perms],Filtro,[A|Res]):- possivel(A,Filtro),  filtra(Lst_Perms,Filtro,Res),!.
+filtra([A|Lst_Perms],Filtro,Res):- \+ possivel(A,Filtro),  filtra(Lst_Perms,Filtro,Res),!.
+
+
+%verifica se a permutacao e possivel
+possivel([],[]).
+
+possivel([_|Res],[B|C]):- B == 0, possivel(Res,C),!.
+possivel([A|Res],[B|C]):- B == A, possivel(Res,C),!.
+
+
+% simplifica(Perms_Possiveis, Novas_Perms_Possiveis)
+% Caso de paragem
+
+simplifica(Perms_Possiveis, Res):- atribui_comuns(Perms_Possiveis),
+                                retira_impossiveis(Perms_Possiveis,Res),
+                                Res == Perms_Possiveis,!.
+
+simplifica(Perms, Novas) :- atribui_comuns(Perms),
+                        retira_impossiveis(Perms, Res),
+                        simplifica(Res, Novas).
+
+% inicializa(Puzzle, Perms_Possiveis)
+
+inicializa(Puzzle, Res):- espacos_puzzle(Puzzle, Espacos),
+                        permutacoes_possiveis_espacos(Espacos, Perms_Possiveis),
+                        simplifica(Perms_Possiveis,Res),!.
+
+% escolhe_menos_alternativas(Perms_Possiveis, Escolha)
+
+% escolher([[[X,Y],[[1,2],[3,4]]],[[X,Y],[[1,2]]],[[X,Y],[[5,6],[7,9]]]],Res,X).
+
+escolhe_menos_alternativas(Perms_Possiveis, M):- escolher(Perms_Possiveis,M,_).
+
+ler_tamanho(L,Res):- L = [_,B],length(B,Res).
+
+% caso de regressao
+escolher([],[],9999).
+%caso de tamanho ser 1
+escolher([A|L],Res,Antigo):- ler_tamanho(A,Tam),Tam == 1, escolher(L,Res,Antigo),!.
+escolher([A|L],A,Tam):- ler_tamanho(A,Tam), escolher(L,_,Antigo),Antigo >= Tam,!.
+escolher([A|L],Res,Antigo):- ler_tamanho(A,Tam),  escolher(L,Res,Antigo),Antigo < Tam,!.
+
+
+
+
+
+% experimenta_perm(Escolha, Perms_Possiveis, Novas_Perms_Possiveis)
+
+experimenta_perm(Escolha, Perms_Possiveis, Novas_Perms_Possiveis):- Escolha = [Esp, Lst_Perms],
+                                                            member(Perm,Lst_Perms),
+                                                            Esp = Perm,
+                                                            maplist(igual_escolha(Escolha,Esp,Perm),Perms_Possiveis,Novas_Perms_Possiveis).
+
+igual_escolha(Escolha,Esp,Perm,E,A):- Escolha == E, A = [Esp,[Perm]],!.
+
+igual_escolha(Escolha,_,_,E,E):- Escolha \== E.
+
+% resolve_aux(Perms_Possiveis, Novas_Perms_Possiveis)
+
+% escolhe_menos_alternativas(Perms_Possiveis, Escolha)
+
+% experimenta_perm(Escolha, Perms_Possiveis, Novas_Perms_Possiveis)
+
+% simplifica(Perms_Possiveis, Novas_Perms_Possiveis)
+
+
+resolve_aux(Perms_poss, Novas_Perms_Possiveis):- escolhe_menos_alternativas(Perms_poss, Escolha),
+                                        experimenta_perm(Escolha, Perms_poss, A),
+                                        simplifica(A, B),
+                                        resolve_aux(B,Novas_Perms_Possiveis).
+
+resolve_aux(Perms_Possiveis, A):- simplifica(Perms_Possiveis,A).
+
+
+
