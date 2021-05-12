@@ -156,10 +156,9 @@ permutacoes_possiveis_espaco(Espacos, _, Esp,Perms_poss):- bagof(Aux,permutacao_
 
 %permutacoes_possiveis_espacos(Espacos, Perms_poss_esps)
 
-permutacoes_possiveis_espacos(Espacos, Perms_poss_esps):- permutacoes_possiveis_espacos(Espacos, Perms_poss_esps,Espacos).
-permutacoes_possiveis_espacos([], [],_). 
-permutacoes_possiveis_espacos([Esp|Espacos], [Perms|Perms_poss_esps],Todos):- permutacoes_possiveis_espaco(Todos, _, Esp,Perms),
-                                                                    permutacoes_possiveis_espacos(Espacos, Perms_poss_esps,Todos).
+
+permutacoes_possiveis_espacos(Espacos, Res):-
+bagof(P,(member(Espaco,Espacos),permutacoes_possiveis_espaco(Espacos, _, Espaco,P)), Res).
 
 % numeros_comuns(Lst_Perms, Numeros_comuns)
 
@@ -193,7 +192,7 @@ atribui_comuns([A|Perms_Possiveis]):- nth1(1,A,D),nth1(2,A,L),
                                         juntar(D,Lista),
                                         atribui_comuns(Perms_Possiveis).
 
-atribui_comuns([A|Perms_Possiveis]):- A = [_|L],atribui_comuns(Perms_Possiveis),!.
+atribui_comuns([A|Perms_Possiveis]):- A = [_|_],atribui_comuns(Perms_Possiveis),!.
                                     
 % funcao auxiliar que substitui valores
 juntar(_,[]).

@@ -1,5 +1,5 @@
 % Tomas Esteves - ist199341
-:- [codigo_comum].
+:- [codigo_comum,puzzles_publicos].
 
 %-------------------------------------------------------------------------------
 %                   combinacoes_soma(N, Els, Soma, Combs)
@@ -53,7 +53,7 @@ espaco_fila(Fila,Esp,H_V):- include(is_list,Fila,C),
 %criar espaco
 espaco_fila(Fila,Esp,H_V):- include(is_list,Fila,C),
                            C = [_,Z|_],
-                           split(Fila,Z,F,_),
+                           separa_lista(Fila,Z,F,_),
                            F = [A|B],
                            A \== [0,0],
                            B \== [],
@@ -62,7 +62,7 @@ espaco_fila(Fila,Esp,H_V):- include(is_list,Fila,C),
 % adicionar a lista se Z for diferente de [0,0]
 espaco_fila(Fila,Esp,H_V):- include(is_list,Fila,C),
                               C = [_,Z|_],
-                              split(Fila,Z,_,B),
+                              separa_lista(Fila,Z,_,B),
                               Z \== [0,0],
                               espaco_fila([Z|B],Esp,H_V).
 
@@ -70,16 +70,16 @@ espaco_fila(Fila,Esp,H_V):- include(is_list,Fila,C),
 
 espaco_fila(Fila,Esp,H_V):- include(is_list,Fila,C),
                            C = [_,Z|_],
-                           split(Fila,Z,_,B),
+                           separa_lista(Fila,Z,_,B),
                            Z == [0,0],
                            espaco_fila(B,Esp,H_V).
 
 % funcao auxilliar para separar uma lista
-split([X|T],E,[],T):- X == E.
+separa_lista([Novo|L],El,[],L):- Novo == El.
 
-split([X|T], E, [X|LL], LR) :-
+separa_lista([X|T], E, [X|LL], LR) :-
     X \== E,
-    split(T, E, LL, LR).
+    separa_lista(T, E, LL, LR).
 
 
 %-------------------------------------------------------------------------------
@@ -124,19 +124,19 @@ le_puzzle([A|Res],Espacos,H_V):- espacos_fila(H_V,A,Resultado),
 espacos_com_posicoes_comuns([],_,[]).
 
 % caso de nao ter casas em comum
-espacos_com_posicoes_comuns([A|Res],Esp,Esps_com):- lista_espaco(A,Lst),
+espacos_com_posicoes_comuns([El|Res],Esp,Esps_com):- lista_espaco(El,Lst),
                                                      lista_espaco(Esp,Num),
                                                      \+ ver_comuns(Lst,Num),!,
                                                      espacos_com_posicoes_comuns(Res,Esp,Esps_com),!.
 
 % caso de ter casas em comum
-espacos_com_posicoes_comuns([A|Res],Esp,[A|Esps_com]):- lista_espaco(A,Lst),
+espacos_com_posicoes_comuns([El|Res],Esp,[El|Esps_com]):- lista_espaco(El,Lst),
                                                      lista_espaco(Esp,Num),
                                                       ver_comuns(Lst,Num),
-                                                      A \== Esp,
+                                                      El \== Esp,
                                                       espacos_com_posicoes_comuns(Res,Esp,Esps_com),!.
 % caso de ser igual ao proprio espaco
-espacos_com_posicoes_comuns([A|Res],Esp,Esps_com):- A == Esp,
+espacos_com_posicoes_comuns([El|Res],Esp,Esps_com):- El == Esp,
                                                     espacos_com_posicoes_comuns(Res,Esp,Esps_com),!.
 
 %funcoes auxiliares
@@ -156,12 +156,13 @@ ver_comuns([_|B],L):- ver_comuns(B,L).
 
 permutacoes_soma_espacos([],[]).
 
-permutacoes_soma_espacos([Esp|Res_espacos],[Novo|Perms_soma]):- lista_espaco(Esp,Lst),
-                                                length(Lst,N),
-                                                numero_espaco(Esp,Soma),
-                                                permutacoes_soma(N, [1,2,3,4,5,6,7,8,9], Soma, Perms),
-                                                append([Esp],[Perms],Novo),
-                                                permutacoes_soma_espacos(Res_espacos,Perms_soma).
+permutacoes_soma_espacos([Esp|Res_espacos],[Novo|Perms_soma]):- 
+                        lista_espaco(Esp,Lst),
+                        length(Lst,N),
+                        numero_espaco(Esp,Soma),
+                        permutacoes_soma(N, [1,2,3,4,5,6,7,8,9], Soma, Perms),
+                        append([Esp],[Perms],Novo),
+                        permutacoes_soma_espacos(Res_espacos,Perms_soma).
 
 %-------------------------------------------------------------------------------
 %             permutacao_possivel_espaco(Perm, Esp, Espacos, Perms_soma)
@@ -199,7 +200,8 @@ pertence_a_1_lista(El, Listas) :-member(Lista, Listas),
 % verificar_se_pertence([1,9],[[1,2,3],[9,8,7]]).
 % ver se uma lista pertence a uma quantidade de listas
 verificar_se_pertence([],[]).
-verificar_se_pertence([A|Perms],[B|Espacos]):- pertence_a_1_lista(A,B),verificar_se_pertence(Perms,Espacos).
+verificar_se_pertence([A|Perms],[B|Espacos]):- pertence_a_1_lista(A,B),
+                                                verificar_se_pertence(Perms,Espacos).
 
 % faz a lista de lista com espacos possiveis
 apanhar_lista([],[]).
@@ -214,8 +216,9 @@ apanhar_lista([A|Lista],Novo):- A = [_|Perms],append(Perms,Res,Novo),apanhar_lis
 % o segundo e a lista ordenada de permutacoes possiveis para o espaco Esp.
 %-------------------------------------------------------------------------------
 
-permutacoes_possiveis_espaco(Espacos, _, Esp,Perms_poss):- bagof(Aux,permutacao_possivel_espaco(Aux, Esp, Espacos, _),B),
-                                                            lista_espaco(Esp,A),append([A],[B],Perms_poss).
+permutacoes_possiveis_espaco(Espacos, _, Esp,[Lista|[Perms]]):- 
+                        bagof(Aux,permutacao_possivel_espaco(Aux, Esp, Espacos, _),Perms),
+                        lista_espaco(Esp,Lista).
 
 %-------------------------------------------------------------------------------
 %       permutacoes_possiveis_espacos(Espacos, Perms_poss_esps)
@@ -224,10 +227,14 @@ permutacoes_possiveis_espaco(Espacos, _, Esp,Perms_poss):- bagof(Aux,permutacao_
 %-------------------------------------------------------------------------------
 
 % needs optimization
-permutacoes_possiveis_espacos(Espacos, Perms_poss_esps):- permutacoes_possiveis_espacos(Espacos, Perms_poss_esps,Espacos).
+permutacoes_possiveis_espacos(Espacos, Perms_poss_esps):- 
+permutacoes_possiveis_espacos(Espacos, Perms_poss_esps,Espacos).
+
 permutacoes_possiveis_espacos([], [],_). 
-permutacoes_possiveis_espacos([Esp|Espacos], [Perms|Perms_poss_esps],Todos):- permutacoes_possiveis_espaco(Todos, _, Esp,Perms),
-                                                                    permutacoes_possiveis_espacos(Espacos, Perms_poss_esps,Todos).
+
+permutacoes_possiveis_espacos([Esp|Espacos], [Perms|Perms_poss_esps],Todos):- 
+        permutacoes_possiveis_espaco(Todos, _, Esp,Perms),
+        permutacoes_possiveis_espacos(Espacos, Perms_poss_esps,Todos).
 
 %-------------------------------------------------------------------------------
 %               numeros_comuns(Lst_Perms, Numeros_comuns)
