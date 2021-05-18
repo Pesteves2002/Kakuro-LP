@@ -103,12 +103,12 @@ espaco_fila(Fila,Esp,H_V):-
         Z == [0,0],
         espaco_fila(B,Esp,H_V).
 
-% funcao auxilliar para separar uma lista
+% funcao auxilliar para separar uma lista de acordo com um elemento
 separa_lista([Novo|L],El,[],L):- Novo == El.
 
-separa_lista([Novo|T], El, [Novo|Prim], Seg) :-
+separa_lista([Novo|L], El, [Novo|Prim], Seg) :-
     Novo \== El,
-    separa_lista(T, El, Prim, Seg).
+    separa_lista(L, El, Prim, Seg).
 
 %-------------------------------------------------------------------------------
 %                    espacos_fila(H_V, Fila, Espacos)
@@ -352,7 +352,7 @@ atribui_comuns([El|Perms_Possiveis]):-
 
 % Caso de nao haver numeros comuns
 atribui_comuns([_|Perms_Possiveis]):- atribui_comuns(Perms_Possiveis),!.
-                                    
+
 %                   juntar(Lista_Vars,Perms_Possivel)
 % Atribui o valor da permutacao ao espaco
 
@@ -395,15 +395,17 @@ obter_lista([A|Res],[L|Resto]):-
         obter_lista(Res,Resto),!.
 
 
-%                   verificar(A,Filtro)
+%                   verificar(El,Filtro)
+% Se El for uma varival eh adicionado um zero ao Filtro,
+% se nao adiciona-se o elemento.
 
 verificar([],[]).
 
 % Se for uma variavel adiciona um zero
-verificar([A|Resto],[0|Res]):- var(A), verificar(Resto,Res),!.
+verificar([El|Resto],[0|Res]):- var(El), verificar(Resto,Res),!.
 
 % Se nao for uma variavel adiciona um o inteiro
-verificar([A|Resto],[A|Res]):- nonvar(A), verificar(Resto,Res),!.
+verificar([El|Resto],[El|Res]):- nonvar(El), verificar(Resto,Res),!.
 
 
 % funcao que ve se uma permutacao pode esta de acordo com o filtro
@@ -509,10 +511,10 @@ igual_escolha(Escolha,E,E):-
         Escolha \== E,!.
 
 % substitui na lista
-igual_escolha(Escolha,E,A):- 
+igual_escolha(Escolha,E,Subs):- 
         Escolha == E,
         Escolha = [Esp|_] ,
-        A = [Esp,[Esp]],!.
+        Subs = [Esp,[Esp]],!.
 
 %-------------------------------------------------------------------------------
 %             resolve_aux(Perms_Possiveis, Novas_Perms_Possiveis)
